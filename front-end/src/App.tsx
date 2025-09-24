@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getApi } from "./adapters";
 import type { Backend } from "./adapters";
 import type { User } from "./apiTypes";
@@ -14,6 +14,12 @@ export default function App() {
   const [trace, setTrace] = useState<any>(undefined);
   const [loading, setLoading] = useState(false);
 
+  // 🔄 Limpiar UI al cambiar de tecnología (mejor legibilidad)
+  useEffect(() => {
+    setUsers([]);
+    setTrace(undefined);
+  }, [backend]);
+
   async function doList() {
     setLoading(true);
     try {
@@ -28,9 +34,8 @@ export default function App() {
   async function doCreate() {
     setLoading(true);
     try {
-      const { data, trace } = await api.createUser({ name, email });
+      const { trace } = await api.createUser({ name, email });
       setTrace(trace);
-      // refresca lista para ver el nuevo
       const out = await api.listUsers();
       setUsers(out.data);
     } finally {
@@ -38,91 +43,155 @@ export default function App() {
     }
   }
 
-  return (
-    <div
-      style={{ maxWidth: 1100, margin: "24px auto", fontFamily: "system-ui" }}
+  const SegButton = ({
+    active,
+    onClick,
+    children,
+    disableWhenActive = true,
+  }: {
+    active: boolean;
+    onClick: () => void;
+    children: React.ReactNode;
+    disableWhenActive?: boolean;
+  }) => (
+    <button
+      onClick={onClick}
+      disabled={disableWhenActive && active}
+      className={[
+        "px-3 py-1.5 text-sm font-medium transition",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500",
+        active
+          ? "bg-zinc-800 text-zinc-100"
+          : "bg-zinc-900 text-zinc-200 hover:bg-zinc-800",
+      ].join(" ")}
     >
-      <h2>API Fest — Demo Unificada</h2>
+      {children}
+    </button>
+  );
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <button
-          onClick={() => setBackend("rest")}
-          disabled={backend === "rest"}
-        >
-          REST
-        </button>
-        <button
-          onClick={() => setBackend("graphql")}
-          disabled={backend === "graphql"}
-        >
-          GraphQL
-        </button>
-        <button
-          onClick={() => setBackend("jsonrpc")}
-          disabled={backend === "jsonrpc"}
-        >
-          JSON-RPC
-        </button>
-        <button
-          onClick={() => setBackend("trpc")}
-          disabled={backend === "trpc"}
-        >
-          tRPC
-        </button>
-      </div>
+  return (
+    <div className="mx-auto max-w-7xl p-6 text-zinc-100">
+      {/* Header */}
+      <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-3xl font-extrabold tracking-tight">
+          API Fest — Demo Unificada
+        </h1>
+        <div className="inline-flex overflow-hidden rounded-lg border border-zinc-700">
+          <SegButton
+            active={backend === "rest"}
+            onClick={() => setBackend("rest")}
+          >
+            REST
+          </SegButton>
+          <SegButton
+            active={backend === "graphql"}
+            onClick={() => setBackend("graphql")}
+          >
+            GraphQL
+          </SegButton>
+          <SegButton
+            active={backend === "jsonrpc"}
+            onClick={() => setBackend("jsonrpc")}
+          >
+            JSON-RPC
+          </SegButton>
+          <SegButton
+            active={backend === "trpc"}
+            onClick={() => setBackend("trpc")}
+          >
+            tRPC
+          </SegButton>
+        </div>
+      </header>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div>
-          <h3>Formulario</h3>
-          <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+      {/* Zona superior: Form + Usuarios (dos columnas) */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Formulario */}
+        <div className="rounded-lg border border-zinc-700 bg-zinc-800 p-5">
+          <h3 className="mb-4 text-lg font-semibold">Formulario</h3>
+          <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input
+              className="w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:ring-2 focus:ring-zinc-500"
+              placeholder="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="name"
             />
             <input
+              className="w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:ring-2 focus:ring-zinc-500"
+              placeholder="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="email"
             />
           </div>
-          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-            <button onClick={doCreate} disabled={loading}>
-              Create
+          <div className="flex items-center gap-3">
+            <button
+              onClick={doCreate}
+              disabled={loading}
+              className="rounded-md bg-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-600 disabled:opacity-50"
+            >
+              {loading ? "Creando…" : "Create"}
             </button>
-            <button onClick={doList} disabled={loading}>
-              List
+            <button
+              onClick={doList}
+              disabled={loading}
+              className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-800 disabled:opacity-50"
+            >
+              {loading ? "Listando…" : "List"}
             </button>
-            <span style={{ opacity: 0.7 }}>
-              Backend actual: <b>{backend}</b>
+            <span className="text-xs text-zinc-400">
+              Backend actual: <b className="text-zinc-200">{backend}</b>
             </span>
           </div>
+        </div>
 
-          <h3>Usuarios</h3>
-          <table width="100%" border={1} cellPadding={6}>
-            <thead>
-              <tr>
-                <th>id</th>
-                <th>name</th>
-                <th>email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
-                <tr key={u.id}>
-                  <td>{u.id}</td>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
+        {/* Usuarios (a la izquierda en pantallas medianas+) */}
+        <div className="rounded-lg border border-zinc-700 bg-zinc-800 p-5">
+          <h3 className="mb-3 text-lg font-semibold">Usuarios</h3>
+          <div className="overflow-hidden rounded-md border border-zinc-700">
+            <table className="min-w-full divide-y divide-zinc-700 text-sm">
+              <thead className="bg-zinc-900">
+                <tr>
+                  <th className="px-3 py-2 text-left font-medium text-zinc-200">
+                    id
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-zinc-200">
+                    name
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-zinc-200">
+                    email
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-700">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-zinc-900/60">
+                    <td className="px-3 py-2 font-mono text-[12px] text-zinc-300">
+                      {u.id}
+                    </td>
+                    <td className="px-3 py-2">{u.name}</td>
+                    <td className="px-3 py-2 text-zinc-300">{u.email}</td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={3}
+                      className="px-3 py-6 text-center text-zinc-400"
+                    >
+                      Sin usuarios todavía…
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
 
-        <div>
-          <h3>Traza</h3>
-          <TracePanel trace={trace} />
-        </div>
+      {/* Traza abajo, full width */}
+      <div className="mt-6">
+        <h3 className="mb-3 text-lg font-semibold">Traza</h3>
+        <TracePanel trace={trace} />
       </div>
     </div>
   );
