@@ -1,4 +1,13 @@
 @import "tailwindcss";
+@tailwind utilities;
+
+/* Opcional: transición suave al cambiar tema */
+:root {
+  color-scheme: light dark;
+}
+html {
+  transition: color 120ms, background-color 120ms;
+}
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
