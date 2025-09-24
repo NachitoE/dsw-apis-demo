@@ -13,18 +13,8 @@ export default function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [trace, setTrace] = useState<any>(undefined);
   const [loading, setLoading] = useState(false);
-  const [dark, setDark] = useState<boolean>(() => {
-    // preferencia inicial (persistible si querés)
-    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
-  });
 
-  // aplica tema al <html>
-  useEffect(() => {
-    const root = document.documentElement;
-    dark ? root.classList.add("dark") : root.classList.remove("dark");
-  }, [dark]);
-
-  // limpiar UI al cambiar tecnología
+  // limpiar UI al cambiar tecnología (mejor legibilidad)
   useEffect(() => {
     setUsers([]);
     setTrace(undefined);
@@ -65,11 +55,13 @@ export default function App() {
     <button
       onClick={onClick}
       className={[
-        "px-4 py-2 text-sm font-medium rounded-md transition focus:outline-none focus-visible:ring-2",
-        "focus-visible:ring-blue-500",
+        "px-4 py-2 text-sm font-medium rounded-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
         active
-          ? "bg-blue-600 text-white hover:bg-blue-500"
-          : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-700",
+          ? // Activo: Azul en claro y oscuro, siempre texto blanco
+            "bg-blue-600 text-white hover:bg-blue-500"
+          : // Inactivo: claro/oscuro con buen contraste
+            "bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 " +
+            "dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-700",
       ].join(" ")}
     >
       {children}
@@ -82,44 +74,32 @@ export default function App() {
       <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold">API Fest — Demo Unificada</h1>
 
-        <div className="flex items-center gap-3">
-          {/* Toggle tema */}
-          <button
-            onClick={() => setDark((v) => !v)}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
-            aria-label="Toggle theme"
-            title="Cambiar tema"
+        {/* Botonera backend */}
+        <div className="flex gap-2">
+          <SegButton
+            active={backend === "rest"}
+            onClick={() => setBackend("rest")}
           >
-            {dark ? "Tema oscuro" : "Tema claro"}
-          </button>
-
-          {/* Botonera backend */}
-          <div className="flex gap-2">
-            <SegButton
-              active={backend === "rest"}
-              onClick={() => setBackend("rest")}
-            >
-              REST
-            </SegButton>
-            <SegButton
-              active={backend === "graphql"}
-              onClick={() => setBackend("graphql")}
-            >
-              GraphQL
-            </SegButton>
-            <SegButton
-              active={backend === "jsonrpc"}
-              onClick={() => setBackend("jsonrpc")}
-            >
-              JSON-RPC
-            </SegButton>
-            <SegButton
-              active={backend === "trpc"}
-              onClick={() => setBackend("trpc")}
-            >
-              tRPC
-            </SegButton>
-          </div>
+            REST
+          </SegButton>
+          <SegButton
+            active={backend === "graphql"}
+            onClick={() => setBackend("graphql")}
+          >
+            GraphQL
+          </SegButton>
+          <SegButton
+            active={backend === "jsonrpc"}
+            onClick={() => setBackend("jsonrpc")}
+          >
+            JSON-RPC
+          </SegButton>
+          <SegButton
+            active={backend === "trpc"}
+            onClick={() => setBackend("trpc")}
+          >
+            tRPC
+          </SegButton>
         </div>
       </header>
 
