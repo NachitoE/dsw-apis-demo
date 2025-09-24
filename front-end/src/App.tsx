@@ -46,22 +46,18 @@ export default function App() {
     active,
     onClick,
     children,
-    disableWhenActive = true,
   }: {
     active: boolean;
     onClick: () => void;
     children: React.ReactNode;
-    disableWhenActive?: boolean;
   }) => (
     <button
       onClick={onClick}
-      disabled={disableWhenActive && active}
       className={[
-        "px-3 py-1.5 text-sm font-medium transition",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500",
+        "px-4 py-2 text-sm font-medium border transition rounded-md",
         active
-          ? "bg-zinc-800 text-zinc-100"
-          : "bg-zinc-900 text-zinc-200 hover:bg-zinc-800",
+          ? "bg-blue-600 text-white border-blue-600"
+          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100",
       ].join(" ")}
     >
       {children}
@@ -69,13 +65,11 @@ export default function App() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl p-6 text-zinc-100">
+    <div className="mx-auto max-w-7xl p-8 text-gray-900 bg-gray-50 min-h-screen">
       {/* Header */}
       <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-extrabold tracking-tight">
-          DSW APIs Demo
-        </h1>
-        <div className="inline-flex overflow-hidden rounded-lg border border-zinc-700">
+        <h1 className="text-2xl font-bold">API Fest — Demo Unificada</h1>
+        <div className="flex gap-2">
           <SegButton
             active={backend === "rest"}
             onClick={() => setBackend("rest")}
@@ -103,20 +97,20 @@ export default function App() {
         </div>
       </header>
 
-      {/* Zona superior: Form + Usuarios (dos columnas) */}
+      {/* Top zone: Form + Users */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Formulario */}
-        <div className="rounded-lg border border-zinc-700 bg-zinc-800 p-5">
+        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm">
           <h3 className="mb-4 text-lg font-semibold">Formulario</h3>
           <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input
-              className="w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:ring-2 focus:ring-zinc-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <input
-              className="w-full rounded-md border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:ring-2 focus:ring-zinc-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -126,56 +120,56 @@ export default function App() {
             <button
               onClick={doCreate}
               disabled={loading}
-              className="rounded-md bg-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-600 disabled:opacity-50"
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
             >
               {loading ? "Creando…" : "Create"}
             </button>
             <button
               onClick={doList}
               disabled={loading}
-              className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-800 disabled:opacity-50"
+              className="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-300 disabled:opacity-50"
             >
               {loading ? "Listando…" : "List"}
             </button>
-            <span className="text-xs text-zinc-400">
-              Backend actual: <b className="text-zinc-200">{backend}</b>
+            <span className="text-xs text-gray-500">
+              Backend actual: <b>{backend}</b>
             </span>
           </div>
         </div>
 
-        {/* Usuarios (a la izquierda en pantallas medianas+) */}
-        <div className="rounded-lg border border-zinc-700 bg-zinc-800 p-5">
+        {/* Usuarios */}
+        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm">
           <h3 className="mb-3 text-lg font-semibold">Usuarios</h3>
-          <div className="overflow-hidden rounded-md border border-zinc-700">
-            <table className="min-w-full divide-y divide-zinc-700 text-sm">
-              <thead className="bg-zinc-900">
+          <div className="overflow-hidden rounded-md border border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium text-zinc-200">
+                  <th className="px-3 py-2 text-left font-medium text-gray-600">
                     id
                   </th>
-                  <th className="px-3 py-2 text-left font-medium text-zinc-200">
+                  <th className="px-3 py-2 text-left font-medium text-gray-600">
                     name
                   </th>
-                  <th className="px-3 py-2 text-left font-medium text-zinc-200">
+                  <th className="px-3 py-2 text-left font-medium text-gray-600">
                     email
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-700">
+              <tbody className="divide-y divide-gray-100">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-zinc-900/60">
-                    <td className="px-3 py-2 font-mono text-[12px] text-zinc-300">
+                  <tr key={u.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 font-mono text-xs text-gray-500">
                       {u.id}
                     </td>
                     <td className="px-3 py-2">{u.name}</td>
-                    <td className="px-3 py-2 text-zinc-300">{u.email}</td>
+                    <td className="px-3 py-2 text-gray-600">{u.email}</td>
                   </tr>
                 ))}
                 {users.length === 0 && (
                   <tr>
                     <td
                       colSpan={3}
-                      className="px-3 py-6 text-center text-zinc-400"
+                      className="px-3 py-6 text-center text-gray-400"
                     >
                       Sin usuarios todavía…
                     </td>
@@ -187,7 +181,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Traza abajo, full width */}
+      {/* Traza */}
       <div className="mt-6">
         <h3 className="mb-3 text-lg font-semibold">Traza</h3>
         <TracePanel trace={trace} />
