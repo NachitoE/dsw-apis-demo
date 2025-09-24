@@ -14,7 +14,6 @@ export default function App() {
   const [trace, setTrace] = useState<any>(undefined);
   const [loading, setLoading] = useState(false);
 
-  // 🔄 Limpiar UI al cambiar de tecnología (mejor legibilidad)
   useEffect(() => {
     setUsers([]);
     setTrace(undefined);
@@ -74,7 +73,7 @@ export default function App() {
       {/* Header */}
       <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-extrabold tracking-tight">
-          API Fest — Demo Unificada
+          DSW APIs Demo
         </h1>
         <div className="inline-flex overflow-hidden rounded-lg border border-zinc-700">
           <SegButton

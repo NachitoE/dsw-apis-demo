@@ -20,7 +20,7 @@ export const trpcApi: UserAPI = {
       meta: "trpc mutate user.createUser",
       requestWire: { input },
       responseWire: data, // tRPC ya te da el dato “pelado”
-      status: undefined, // el cliente no expone status HTTP
+      status: undefined,
       ms: performance.now() - t0,
     };
     return { data, trace };
