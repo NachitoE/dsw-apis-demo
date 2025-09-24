@@ -1,15 +1,37 @@
 import type { Trace } from "../apiTypes";
 
-export function TracePanel({ trace }: { trace?: Trace }) {
+function formatData(data: any) {
+  if (!data) return "—";
+  // object {}
+  if (typeof data === "object" && "query" in data) {
+    return [
+      (data as any).query, // el query ya viene con saltos de línea
+      data.variables ? JSON.stringify(data.variables, null, 2) : null,
+    ]
+      .filter(Boolean)
+      .join("\n\nVariables:\n");
+  }
+  // multiline string (graphql)
+  if (typeof data === "string" && data.includes("\n")) {
+    return data;
+  }
+  // fallback: JSON
+  try {
+    return JSON.stringify(data, null, 2);
+  } catch {
+    return String(data);
+  }
+}
+
+export function TracePanel({ trace }: { trace?: any }) {
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      {/* Cada caja ocupa el alto disponible y hace scroll interno */}
       <section className="flex min-h-[52vh] flex-col rounded-lg border border-zinc-700 bg-zinc-800 p-4">
         <h4 className="mb-2 text-sm font-semibold text-zinc-100">
-          Lo que se <span className="text-zinc-300">ENVÍA</span>
+          Lo que se ENVÍA
         </h4>
-        <pre className="mt-1 flex-1 overflow-auto rounded-md bg-zinc-900 p-3 font-mono text-[13px] leading-relaxed text-zinc-200">
-          {trace ? JSON.stringify(trace.requestWire, null, 2) : "—"}
+        <pre className="mt-1 flex-1 overflow-auto rounded-md bg-zinc-900 p-3 font-mono text-[13px] leading-relaxed text-zinc-200 whitespace-pre-wrap">
+          {trace ? formatData(trace.requestWire) : "—"}
         </pre>
       </section>
 
