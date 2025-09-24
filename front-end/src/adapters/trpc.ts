@@ -1,43 +1,44 @@
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import type { CreateUserInput, Trace, User, UserAPI } from "../apiTypes";
+import type { AppRouter } from "../../../back-end/src/transports/trpc";
 
-const URL = "http://localhost:3000/trpc"; // endpoints: /trpc/user.createUser, /trpc/user.listUsers
+const URL = "http://localhost:3000/trpc";
 
-async function trpcCall<T>(
-  path: string,
-  input?: unknown,
-  isMutation?: boolean
-) {
-  const t0 = performance.now();
-  const url = `${URL}/${path}`;
-  const req = isMutation
-    ? { method: "POST", body: JSON.stringify({ input }) }
-    : { method: "GET" }; // para demo, listUsers puede ser GET sin body
-
-  const res = await fetch(url, {
-    ...req,
-    headers: { "Content-Type": "application/json" },
-  });
-  const json = await res.json();
-
-  const trace: Trace = {
-    transport: "tRPC",
-    endpoint: `${req.method} ${url}`,
-    meta: path,
-    requestWire: isMutation ? { input } : null,
-    responseWire: json,
-    status: res.status,
-    ms: performance.now() - t0,
-  };
-
-  if (!res.ok) throw Object.assign(new Error("tRPC error"), { trace });
-
-  // Respuesta de tRPC viene en envoltorio { result: { data: ... } } (o batch)
-  const data = json?.result?.data ?? json?.[0]?.result?.data;
-  return { data: data as T, trace };
-}
+const client = createTRPCProxyClient<AppRouter>({
+  links: [httpBatchLink({ url: URL })],
+});
 
 export const trpcApi: UserAPI = {
-  createUser: (input: CreateUserInput) =>
-    trpcCall<User>("user.createUser", input, true),
-  listUsers: () => trpcCall<User[]>("user.listUsers"),
+  async createUser(input: CreateUserInput) {
+    const t0 = performance.now();
+    // --- TIPADO ---
+    const data: User = await client.user.createUser.mutate(input);
+
+    const trace: Trace = {
+      transport: "tRPC",
+      endpoint: "POST /trpc/user.createUser",
+      meta: "trpc mutate user.createUser",
+      requestWire: { input },
+      responseWire: data, // tRPC ya te da el dato “pelado”
+      status: undefined, // el cliente no expone status HTTP
+      ms: performance.now() - t0,
+    };
+    return { data, trace };
+  },
+
+  async listUsers() {
+    const t0 = performance.now();
+    const data: User[] = await client.user.listUsers.query();
+
+    const trace: Trace = {
+      transport: "tRPC",
+      endpoint: "POST /trpc/user.listUsers", // httpBatchLink usa POST, aunque sea query
+      meta: "trpc query user.listUsers",
+      requestWire: null,
+      responseWire: data,
+      status: undefined,
+      ms: performance.now() - t0,
+    };
+    return { data, trace };
+  },
 };

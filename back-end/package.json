@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
-    "@trpc/server": "^10",
+    "@trpc/server": "^10.45.2",
     "cors": "^2",
     "express": "^4",
     "graphql": "^16.11.0"
