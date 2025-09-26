@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  title: Users API
+  version: 1.0.0
+  description: API REST para gestión de usuarios
+servers:
+  - url: http://localhost:3000/rest
+paths:
+  /users:
+    get:
+      summary: Lista todos los usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Crea un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Juan Perez
+                email:
+                  type: string
+                  format: email
+                  example: juan@correo.com
+              required:
+                - name
+                - email
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: Juan Perez
+        email:
+          type: string
+          format: email
+          example: juan@correo.com
