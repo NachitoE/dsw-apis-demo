@@ -6,7 +6,7 @@ import { TracePanel } from "./components/TracePanel";
 
 const PRESET_USERS = [
   { name: "Kazuma Kiryu", email: "kiryu@yakuza.jp" },
-  { name: "R2-D2", email: "r2d2@rebelsgalaxy.xyz" },
+  { name: "R2-D2", email: "arturitu@rebelsgalaxy.xyz" },
   { name: "Gordon Freeman", email: "gordon@blackmesa.gov" },
   { name: "Doom Guy", email: "destroyerofdemons@doom.com" },
   { name: "Samus Aran", email: "samus@galactic-federation.org" },
@@ -17,7 +17,7 @@ const PRESET_USERS = [
   { name: "Frieren", email: "frieren@magic.com" },
   { name: "Laios", email: "laios@meshi.com" },
   { name: "Mob", email: "mob@psycho.com" },
-  { name: "Harrier Du Bois", email: "drunkcop@elyisum.com" },
+  { name: "Harrier Du Bois", email: "drunkcop@elysium.com" },
   { name: "Gregory House", email: "vicodinlover@princetonp.hospital" },
   { name: "John Marston", email: "john@wild-west.com" },
   { name: "Dante", email: "pizza123@dmc.com" },
