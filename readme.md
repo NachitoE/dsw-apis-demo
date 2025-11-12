@@ -40,3 +40,6 @@ Demo que implementa la misma funcionalidad (CRUD de usuarios) usando cuatro tipo
 **Backend:** Express + TypeScript + MikroORM
 
 Útil para workshops, clases o comparar tecnologías de APIs.
+
+## [Documentación / Informe](https://drive.google.com/file/d/1Ck4CAhWUf5Hx7mTCLauCmDkogKSLyI6r/view?usp=sharing)
+
